@@ -1,4 +1,5 @@
 {
+    "private": true,
     "name": "vscode-beautify",
     "displayName": "vscode-beautify",
     "description": "Beautify JSX",
@@ -8,22 +9,47 @@
         "vscode": "^1.5.0"
     },
     "categories": [
-        "Other"
+        "Other",
+        "Languages"
     ],
+    "license": "MIT",
     "activationEvents": [
-        "onCommand:extension.sayHello"
+        "onLanguage:json",
+        "onLanguage:jsx",
+        "onCommand:beautify",
+        "onCommand:beautify.config",
+        "onCommand:beautify.config.local"
     ],
     "main": "./out/src/extension",
     "contributes": {
-        "commands": [{
-            "command": "extension.sayHello",
-            "title": "Hello World"
-        }]
+        "languages": [
+            {
+                "id": "jsx",
+                "extensions": [
+                    ".jsx"
+                ]
+            }
+        ],
+        "commands": [
+            {
+                "command": "beautify",
+                "title": "Beautify Code"
+            },
+            {
+                "command": "beautify.config",
+                "title": "Beautifier Global Config"
+            },
+            {
+                "command": "beautify.config.local",
+                "title": "Beautifier Local Config"
+            }
+        ]
     },
     "scripts": {
         "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
         "compile": "node ./node_modules/vscode/bin/compile -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install"
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "node ./node_modules/vscode/bin/test"
     },
     "dependencies": {
         "prettydiff": "^1.16.37",
