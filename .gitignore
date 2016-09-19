@@ -1,4 +1,5 @@
 out
 node_modules
 .vscode-test
-/typings/modules/mkdirp
+/typings/modules/*
+/typings/index.d.ts

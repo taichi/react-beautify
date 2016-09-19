@@ -1,3 +1,3 @@
 declare module "prettydiff" {
-    export function fn(options: any): string;
+    export function api(options: any): string[];
 }
