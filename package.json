@@ -1,62 +1,64 @@
 {
-    "private": true,
-    "name": "vscode-beautify",
-    "displayName": "vscode-beautify",
-    "description": "Beautify JSX",
-    "version": "0.0.1",
-    "publisher": "taichi",
-    "engines": {
-        "vscode": "^1.5.0"
-    },
-    "categories": [
-        "Other",
-        "Languages"
-    ],
-    "license": "MIT",
-    "activationEvents": [
-        "onLanguage:json",
-        "onLanguage:jsx",
-        "onCommand:beautify",
-        "onCommand:beautify.config",
-        "onCommand:beautify.config.local"
-    ],
-    "main": "./out/src/extension",
-    "contributes": {
-        "languages": [
-            {
-                "id": "jsx",
-                "extensions": [
-                    ".jsx"
-                ]
-            }
-        ],
-        "commands": [
-            {
-                "command": "beautify",
-                "title": "Beautify Code"
-            },
-            {
-                "command": "beautify.config",
-                "title": "Beautifier Global Config"
-            },
-            {
-                "command": "beautify.config.local",
-                "title": "Beautifier Local Config"
-            }
+  "private": true,
+  "name": "vscode-beautify",
+  "displayName": "vscode-beautify",
+  "description": "Beautify JSX",
+  "version": "0.0.1",
+  "publisher": "taichi",
+  "engines": {
+    "vscode": "^1.5.0"
+  },
+  "categories": [
+    "Other",
+    "Languages"
+  ],
+  "license": "MIT",
+  "activationEvents": [
+    "onLanguage:json",
+    "onLanguage:jsx",
+    "onCommand:beautify",
+    "onCommand:beautify.config",
+    "onCommand:beautify.config.local"
+  ],
+  "main": "./out/src/extension",
+  "contributes": {
+    "languages": [
+      {
+        "id": "jsx",
+        "extensions": [
+          ".jsx"
         ]
-    },
-    "scripts": {
-        "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
-        "compile": "node ./node_modules/vscode/bin/compile -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "node ./node_modules/vscode/bin/test"
-    },
-    "dependencies": {
-        "prettydiff": "^1.16.37",
-        "mkdirp": "^0.5.1"
-    },
-    "devDependencies": {
-        "typescript": "^1.8.5",
-        "vscode": "^0.11.0"
-    }
+      }
+    ],
+    "commands": [
+      {
+        "command": "beautify",
+        "title": "Beautify Code"
+      },
+      {
+        "command": "beautify.config",
+        "title": "Beautifier Global Config"
+      },
+      {
+        "command": "beautify.config.local",
+        "title": "Beautifier Local Config"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
+    "compile": "node ./node_modules/vscode/bin/compile -watch -p ./",
+    "postinstall": "concurrently \"node ./node_modules/vscode/bin/install\" \"typings install\"",
+    "test": "node ./node_modules/vscode/bin/test"
+  },
+  "dependencies": {
+    "prettydiff": "^1.16.37",
+    "mkdirp": "^0.5.1"
+  },
+  "devDependencies": {
+    "concurrently": "^2.2.0",
+    "eslint": "^3.5.0",
+    "typescript": "^1.8.5",
+    "vscode": "^0.11.0"
+  }
 }
