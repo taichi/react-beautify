@@ -1,8 +1,8 @@
 {
   "private": true,
-  "name": "vscode-beautify",
-  "displayName": "vscode-beautify",
-  "description": "Beautify JSX",
+  "name": "react-beautify",
+  "displayName": "react-beautify",
+  "description": "Beautify JSX Code",
   "version": "0.0.1",
   "publisher": "taichi",
   "engines": {
