@@ -5,6 +5,10 @@
   "description": "Beautify JSX Code",
   "version": "0.0.1",
   "publisher": "taichi",
+  "galleryBanner": {
+    "color": "#61dafb",
+    "theme": "dark"
+  },
   "engines": {
     "vscode": "^1.5.0"
   },
@@ -37,7 +41,7 @@
           "default": "prettydiff"
         },
         "react.beautify.configFilePath": {
-          "description": "Specifies the config filepath",
+          "description": "Specifies the workspace relative config filepath",
           "type": "string",
           "default": ".jsbeautifyrc"
         }
@@ -68,5 +72,12 @@
     "concurrently": "^2.2.0",
     "typescript": "^1.8.5",
     "vscode": "^0.11.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/taichi/react-beautify"
+  },
+  "bugs": {
+    "url": "https://github.com/taichi/react-beautify/issues"
   }
 }

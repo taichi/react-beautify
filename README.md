@@ -1,21 +1,34 @@
-# vscode-beautify README
+# react-beautify
 
+This extension wraps prettydiff/esformatter to format your JSX file.
 
-## Features
+### Local Version
 
+If this extension found a locally installed prettydiff/esformatter, this extension uses that instead of bundled module.
 
-## Requirements
+It is strongly recommended that you install formatter implementation locally.
 
+## How To Use
+
+* open Context Menu and choose `Format Code` on `javascriptreact`
+* shortcuts: Alt+Shift+F
+* Press F1, enter `react.beautify`
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
 This extension contributes the following settings:
 
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
+* `react.beautify.onSave`: by default is `false`. if you set `true`, Automatically format files on save.
+* `react.beautify.formatter`: select the formatter implementation. Accepted values are `prettydiff` and `esformatter`. default value is `prettydiff`. 
+* `react.beautify.configFilePath`: Specifies the workspace relative config filepath. default value is `.jsbeautifyrc`.
+  * Comments in your settings file are acceptable (they're removed before the file is parsed).
 
-## Known Issues
+## Formatter Settings
+
+* [Pretty Diff](http://prettydiff.com/documentation.xhtml)
+* [esformatter](https://github.com/millermedeiros/esformatter/blob/master/doc/config.md)
+  * [esformatter-jsx](https://github.com/royriojas/esformatter-jsx#config)
+
+## Releases
+### 0.0.1: 2016-09-22
+* initial release
