@@ -3,3 +3,4 @@ node_modules
 .vscode-test
 /typings/modules/*
 /typings/index.d.ts
+/*.vsix
