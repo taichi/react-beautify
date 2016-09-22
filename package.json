@@ -3,7 +3,7 @@
   "name": "react-beautify",
   "displayName": "react-beautify",
   "description": "Beautify JSX Code",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "publisher": "taichi",
   "galleryBanner": {
     "color": "#61dafb",
@@ -18,6 +18,7 @@
   ],
   "license": "MIT",
   "activationEvents": [
+    "onLanguage:javascript",
     "onLanguage:javascriptreact",
     "onCommand:react.beautify"
   ],
@@ -50,7 +51,7 @@
     "commands": [
       {
         "command": "react.beautify",
-        "title": "Beautify JSX"
+        "title": "Beautify JS/JSX"
       }
     ]
   },

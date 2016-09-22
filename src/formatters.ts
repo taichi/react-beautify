@@ -11,10 +11,10 @@ const formatters = {
 
 export interface Formatter { (src: string, options: any): string; }
 
-export function make(root: string, impl: string): Formatter {
+export function make(root: string, impl: string, langId: string): Formatter {
     let f = formatters[impl];
     if (f) {
-        return f(root, impl);
+        return f(root, impl, langId);
     }
     return (src, opt) => src; // NullFormatter
 }
@@ -35,25 +35,33 @@ function loadModue(root: string, impl: string, onFail: () => any): any {
     return onFail();
 }
 
-function prettydiffFactory(root: string, impl: string): Formatter {
+function prettydiffFactory(root: string, impl: string, langId: string): Formatter {
     const mod = loadModue(root, impl, () => require(impl));
     return (src, options) => {
         let output = mod.api(_.defaultsDeep({}, options, {
             insize: options.tabSize,
             inchar: options.insertSpaces ? " " : "\t",
             source: src,
-            mode: 'beautify',
-            lang: 'jsx',
-            jsx: true
-        }));
+            mode: 'beautify'
+        }, languageOptions[langId]));
         return output[0];
     };
 }
 
-function esformatterFactory(root: string, impl: string): Formatter {
+const languageOptions = {
+    javascript: {
+        lang: "javascript"
+    },
+    javascriptreact: {
+        lang: "jsx",
+        jsx: true
+    }
+}
+
+function esformatterFactory(root: string, impl: string, langId: string): Formatter {
     const mod = loadModue(root, impl, () => {
         let m = require(impl);
-        m.register(require('esformatter-jsx'));
+        m.register(require("esformatter-jsx"));
         return m;
     });
     return (src, options) => {

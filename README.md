@@ -1,6 +1,6 @@
 # react-beautify
 
-This extension wraps prettydiff/esformatter to format your JSX file.
+This extension wraps prettydiff/esformatter to format your javascript, JSX file.
 
 ### Local Version
 
@@ -30,5 +30,8 @@ This extension contributes the following settings:
   * [esformatter-jsx](https://github.com/royriojas/esformatter-jsx#config)
 
 ## Releases
+### 0.1.0: 2016-09-23
+* add javascript support
+
 ### 0.0.1: 2016-09-22
 * initial release
