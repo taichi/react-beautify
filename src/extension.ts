@@ -1,19 +1,22 @@
 'use strict';
-import {   commands, workspace, window,
+import { commands, workspace, window,
     WorkspaceConfiguration, ExtensionContext,
     languages, Range, TextDocument, Position, TextEdit, TextLine, WorkspaceEdit } from 'vscode';
 
 import path = require('path');
 import fs = require('fs');
-import beautifier = require('prettydiff');
+
 import _ = require('lodash');
+import shaver = require('strip-json-comments');
+
+import formatters = require('./formatters');
 
 export function activate(context: ExtensionContext) {
-    context.subscriptions.push(commands.registerCommand('beautify', () => {
+    context.subscriptions.push(commands.registerCommand("react.beautify", () => {
         const a = window.activeTextEditor;
         if (a && a.document) {
-            const r = a.document.validateRange(new Range(0, 0, Number.MAX_VALUE, Number.MAX_VALUE));
-            return format(a.document, r, toOptions(a.options))
+            const r = allOf(a.document);
+            return format(a.document, r, a.options)
                 .then(txt => a.edit(editor => editor.replace(r, txt)))
                 .catch(report);
         }
@@ -25,16 +28,21 @@ export function activate(context: ExtensionContext) {
 function registerFormatter(context: ExtensionContext, languageId: string) {
     context.subscriptions.push(languages.registerDocumentFormattingEditProvider(languageId, {
         provideDocumentFormattingEdits: (document, options, token) => {
-            const r = document.validateRange(new Range(0, 0, Number.MAX_VALUE, Number.MAX_VALUE));
-            return format(document, r, toOptions(options), languageId)
-                .then(txt => [TextEdit.replace(r, txt)], report);
+            const r = allOf(document);
+            return format(document, r, options, languageId)
+                .then(txt => [TextEdit.replace(r, txt)])
+                .catch(report);
         }
     }));
     context.subscriptions.push(languages.registerDocumentRangeFormattingEditProvider(languageId, {
         provideDocumentRangeFormattingEdits: (document, range, options, token) => {
-            const r = document.validateRange(new Range(new Position(range.start.line, 0), range.end.translate(0, Number.MAX_VALUE)));
-            return format(document, r, toOptions(options), languageId)
-                .then(txt => [TextEdit.replace(r, txt)], report);
+            let begin = new Position(range.start.line, 0);
+            let end = range.end.translate(0, Number.MAX_VALUE);
+            let r = document.validateRange(new Range(begin, end));
+            return format(document, r, options, languageId)
+                .then(txt => [TextEdit.replace(r, txt)])
+                .catch(report);
+
         }
     }));
 }
@@ -47,20 +55,21 @@ function formatOnSave(doc) {
     if (doc.languageId !== "javascriptreact") {
         return;
     }
-    if (getOptions<boolean>("onSave", false) === false) {
+    if (getConfig("onSave", false) === false) {
         return;
     }
-    const r = doc.validateRange(new Range(0, 0, Number.MAX_VALUE, Number.MAX_VALUE));
-    const editor = window.visibleTextEditors.find(ed => ed.document && ed.document.fileName === doc.fileName);
-    const options = editor ? editor.options : workspace.getConfiguration('editor');
-    return format(doc, r, toOptions(options), doc.languageId)
+    const r = allOf(doc);
+    let editor = window.visibleTextEditors.find(ed => ed.document && ed.document.fileName === doc.fileName);
+    let options = editor ? editor.options : workspace.getConfiguration('editor');
+    return format(doc, r, options, doc.languageId)
         .then(txt => {
-            const we = new WorkspaceEdit();
+            let we = new WorkspaceEdit();
             we.replace(doc.uri, r, txt);
             doc.sentinel = true;
             return workspace.applyEdit(we);
         })
-        .then(() => doc.save(), report)
+        .then(() => doc.save())
+        .catch(report);
 }
 
 export function deactivate() {
@@ -69,37 +78,52 @@ export function deactivate() {
 export function format(doc: TextDocument, range: Range, defaults: any, languageId?: string): Promise<string> {
     if (doc) {
         if ((languageId ? languageId : doc.languageId) === "javascriptreact") {
-            return makeOptions(doc, defaults, "jsx")
+            const root = workspace.rootPath;
+            return loadOptions(root, defaults)
                 .then(options => {
-                    options.source = doc.getText(doc.validateRange(range));
-                    const output = beautifier.api(options);
-                    return output[0];
+                    let t = getConfig<string>("formatter") || "prettydiff";
+                    return [options, formatters.make(root, t)];
+                }).then(optFmt => {
+                    let src = doc.getText(doc.validateRange(range));
+                    return optFmt[1](src, optFmt[0]);
                 });
         }
-        return Promise.reject<string>("Unsupported languageId " + doc.languageId);
+        return Promise.reject<string>(`Unsupported languageId ${doc.languageId}`);
     }
-    return Promise.reject<string>("Beautiy fail to get File Information. maybe too large.");
+    return Promise.reject<string>("Fail to get File Information. maybe too large.");
 }
 
-function makeOptions(doc: TextDocument, defaults: any, lang: string): Promise<any> {
-    const options = {
-        mode: "beautify",
-        lang: lang
-    };
-    options[lang] = true;
-    return Promise.resolve(_.merge(_.merge(getOptions(lang), defaults), options));
+function loadOptions(root: string, defaults: any): Promise<any> {
+    if (root) {
+        let relpath = getConfig("configFilePath") || ".jsbeautifyrc";
+        const conf = path.join(root, relpath);
+        if (path.normalize(conf).startsWith(root) && fs.existsSync(conf)) {
+            return new Promise((next, reject) =>
+                fs.readFile(conf, "utf8", (err, buffer) => {
+                    if (buffer) {
+                        try {
+                            let srcjson = shaver(buffer.toString());
+                            next(_.defaultsDeep({}, JSON.parse(srcjson), defaults));
+                        } catch (e) {
+                            reject(`incorrect config file. ${conf} can't parse correctly.`);
+                        }
+                    } else {
+                        next(defaults);
+                    }
+                })
+            );
+        }
+    }
+    return Promise.resolve(defaults);
 }
 
-function getOptions<T>(section: string, defaults?: T) {
-    const config = workspace.getConfiguration("beautify");
+function getConfig<T>(section: string, defaults?: T) {
+    const config = workspace.getConfiguration("react.beautify");
     return config.get<T>(section, defaults);
 }
 
-function toOptions(editorOptions) {
-    return {
-        insize: editorOptions.tabSize,
-        inchar: editorOptions.insertSpaces === false ? "\t" : " "
-    };
+function allOf(document: TextDocument): Range {
+    return document.validateRange(new Range(0, 0, Number.MAX_VALUE, Number.MAX_VALUE));
 }
 
 function report(e: string) {
