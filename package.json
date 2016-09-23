@@ -2,8 +2,8 @@
   "private": true,
   "name": "react-beautify",
   "displayName": "react-beautify",
-  "description": "Beautify JSX Code",
-  "version": "0.1.0",
+  "description": "Beautify JS/JSX Code",
+  "version": "0.1.1",
   "publisher": "taichi",
   "galleryBanner": {
     "color": "#61dafb",
