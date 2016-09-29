@@ -11,7 +11,7 @@ import shaver = require('strip-json-comments');
 
 import formatters = require('./formatters');
 
-const supported_languages = ["javascript", "javascriptreact"];
+const supported_languages = ["javascript", "javascriptreact", "typescript", "typescriptreact"];
 
 export function activate(context: ExtensionContext) {
     context.subscriptions.push(commands.registerCommand("react.beautify", () => {

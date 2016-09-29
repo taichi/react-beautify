@@ -2,8 +2,8 @@
   "private": true,
   "name": "react-beautify",
   "displayName": "react-beautify",
-  "description": "Beautify JS/JSX Code",
-  "version": "0.1.1",
+  "description": "Beautify JS/JSX/TS/TSX Code",
+  "version": "0.2.0",
   "publisher": "taichi",
   "galleryBanner": {
     "color": "#61dafb",
@@ -20,6 +20,8 @@
   "activationEvents": [
     "onLanguage:javascript",
     "onLanguage:javascriptreact",
+    "onLanguage:typescript",
+    "onLanguage:typescriptreact",
     "onCommand:react.beautify"
   ],
   "main": "./out/src/extension",
@@ -51,7 +53,7 @@
     "commands": [
       {
         "command": "react.beautify",
-        "title": "Beautify JS/JSX"
+        "title": "Beautify JS/JSX/TS/TSX"
       }
     ]
   },

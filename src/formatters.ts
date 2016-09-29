@@ -55,10 +55,22 @@ const languageOptions = {
     javascriptreact: {
         lang: "jsx",
         jsx: true
+    },
+    typescript: {
+        lang: "typescript",
+        typescript: true
+    },
+    typescriptreact: {
+        lang: "jsx",
+        typescript: true,
+        jsx: true
     }
 }
 
 function esformatterFactory(root: string, impl: string, langId: string): Formatter {
+    if(langId.startsWith("typescript")) {
+        throw "esformatter don't support typescript. use prettydiff.";
+    }
     const mod = loadModue(root, impl, () => {
         let m = require(impl);
         m.register(require("esformatter-jsx"));
