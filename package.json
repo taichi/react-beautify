@@ -3,7 +3,7 @@
   "name": "react-beautify",
   "displayName": "react-beautify",
   "description": "Beautify JS/JSX/TS/TSX Code",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "publisher": "taichi",
   "galleryBanner": {
     "color": "#61dafb",
