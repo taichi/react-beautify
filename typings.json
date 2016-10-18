@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "lodash": "registry:npm/lodash#4.0.0+20160723033700",
-    "resolve-from": "registry:npm/resolve-from#1.0.0+20160723033700"
-  }
-}
