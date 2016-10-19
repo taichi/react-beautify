@@ -1,10 +1,13 @@
 'use strict';
-import { commands, workspace, window,
-    WorkspaceConfiguration, ExtensionContext,
-    languages, Range, TextDocument, Position, TextEdit, TextLine, WorkspaceEdit } from 'vscode';
+import {
+    commands, workspace, window,
+    WorkspaceConfiguration, ExtensionContext, TextDocumentWillSaveEvent,
+    languages, Range, TextDocument, Position, TextEdit, TextLine, WorkspaceEdit
+} from 'vscode';
 
 import path = require('path');
 import fs = require('fs');
+
 
 import _ = require('lodash');
 import shaver = require('strip-json-comments');
@@ -24,7 +27,7 @@ export function activate(context: ExtensionContext) {
         }
     }));
     _.each(supported_languages, l => registerFormatter(context, l));
-    workspace.onDidSaveTextDocument(formatOnSave);
+    workspace.onWillSaveTextDocument(onWillSave);
 }
 
 function registerFormatter(context: ExtensionContext, languageId: string) {
@@ -49,24 +52,19 @@ function registerFormatter(context: ExtensionContext, languageId: string) {
     }));
 }
 
-function formatOnSave(doc) {
-    if (doc.sentinel) {
-        delete doc.sentinel;
-        return;
-    }
+function onWillSave(event: TextDocumentWillSaveEvent) {
+    const doc = event.document;
     if (supports(doc.languageId) && getConfig("onSave", false)) {
         const r = allOf(doc);
         let editor = window.visibleTextEditors.find(ed => ed.document && ed.document.fileName === doc.fileName);
         let options = editor ? editor.options : workspace.getConfiguration('editor');
-        return format(doc, r, options)
+        event.waitUntil(format(doc, r, options)
             .then(txt => {
                 let we = new WorkspaceEdit();
                 we.replace(doc.uri, r, txt);
-                doc.sentinel = true;
                 return workspace.applyEdit(we);
             })
-            .then(() => doc.save())
-            .catch(report);
+            .catch(report));
     }
 }
 

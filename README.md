@@ -30,6 +30,10 @@ This extension contributes the following settings:
   * [esformatter-jsx](https://github.com/royriojas/esformatter-jsx#config)
 
 ## Releases
+### 0.3.0: 2016-10-18
+* Adopt formatOnSave changes
+  * thanks for @jrieken !! 
+
 ### 0.2.0: 2016-09-30
 * add typescript support
 
